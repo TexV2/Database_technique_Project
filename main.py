@@ -7,7 +7,7 @@ import main_helper as helper
 
 
 #Names the database and tables
-DB_NAME = "Infrastructure_Maintenance" #helper.sanitize_input("Example") #Can put whatever here of course, but this gets the message across
+DB_NAME = "Infrastructure_Maintenance" #helper.sanitize_input("Example", True) #Can put whatever here of course, but this gets the message across
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 
@@ -136,7 +136,7 @@ def menu():
     end = False
     while not end:
         print("Choose:")
-        print("1) Infrastructure") #Get all the city's infrastructure sorted based on repairs needed
+        print("1) Infrastructure") 
         print("2) Contractor")
         print("3) Assignment")
         print("4) Maintenance log")
@@ -145,25 +145,56 @@ def menu():
         choice = input("--> ").lower().strip()
 
         match choice:
-            case "r":
-                conn = get_connection()
-                cur = conn.cursor()
-                cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
-                conn.commit()
-                cur.close()
-                conn.close()
-                main_setup(False)
-                print("\n\nData has successfully been reset.")
+            case "1":
+                print("Idk yet")
+                #Get status: Get all the city's infrastructure sorted based on repairs needed 
+                #Etc
+
             case "2":
                 print("Idk yet")
+
+            case "3":
+                print("Idk yet")
+
+            case "4":
+                print("Idk yet")
+
             case "q":
                 print("Goodbye.")
                 end = True
+
+            case "r":
+                print("\nAre you sure? (y/n)")
+                double_check = input("--> ")
+                if double_check[0].lower() == "y":
+                    conn = get_connection()
+                    cur = conn.cursor()
+                    print("\nDo you want to add dummy data? (y/n)")
+                    answer = input("--> ")
+                    if answer[0].lower() == "y":
+                        cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
+                        conn.commit()
+                        main_setup()
+                        print("Database has successfully been reset.")
+                    elif answer[0].lower() == "n":
+                        cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
+                        conn.commit()
+                        main_setup(False)
+                        print("Database has successfully been reset.")
+                    else:
+                        print("Invalid input.")
+                    cur.close()
+                    conn.close()
+                elif double_check[0].lower() == "n":
+                    print("No changes were made.")
+                else:
+                    print("Invalid input.")
+
             case _:
                 print("Invalid input, please try again.")
 
         if not end:
-            input("\nPress enter to continue...")
+            input("\nPress enter to continue... ")
 
 
 
