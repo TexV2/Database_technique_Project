@@ -7,7 +7,7 @@ import main_helper as helper
 
 
 #Names the database and tables
-DB_NAME = "Infrastructure Maintenance" #helper.sanitize_input("Example") #Can put whatever here of course, but this gets the message across
+DB_NAME = "Infrastructure_Maintenance" #helper.sanitize_input("Example") #Can put whatever here of course, but this gets the message across
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 
@@ -30,7 +30,7 @@ def db_setup(conn):
     cur.close()
 
 
-#Creates the database tables
+
 def schema_setup(conn):
     cur = conn.cursor()
     cur.execute(
@@ -46,6 +46,7 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: Infrastructure")
     
     cur.execute(
         """
@@ -59,7 +60,8 @@ def schema_setup(conn):
         )
         """
     )
-    
+    print("Created entity: Contractor")
+
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS Assignment(
@@ -76,6 +78,7 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: Assignment")
 
     cur.execute( #What would happen if the program crashed before the user could submit a maintenance log? 
         """
@@ -91,6 +94,7 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: MaintenanceLog\n")
     
     conn.commit()
     cur.close()
@@ -98,7 +102,7 @@ def schema_setup(conn):
 
 
 #Initializes the database and then adds our dummy data
-def main_setup():
+def main_setup(dummy_data = True):
     conn = get_connection()
 #Initializes the database
     db_setup(conn)
@@ -106,23 +110,24 @@ def main_setup():
     conn.commit()
 #Adds dummy data
     cur = conn.cursor()
-    for table in TABLES:
-        cur.execute(f"SELECT 1 FROM {table} LIMIT 1") #Checks if a table has data in it
-        has_rows = cur.fetchone() is not None
-        if not has_rows:
-            cur.execute(helper.basic_values(table))
-            conn.commit()
-            print(f"Created {table} and filled it with dummy data")
-        else:
-            print(f"{table} already contains data — skipping")
-            continue
-#Prints tables
-    for table in TABLES:
-        print(f"{table}:")
-        cur.execute(f"SELECT * FROM {table}")
-        table_info = cur.fetchall()
-        print(helper.table_viewer(table, table_info))
-        print("\n\n\n")
+    if dummy_data:
+        for table in TABLES:
+            cur.execute(f"SELECT 1 FROM {table} LIMIT 1") #Checks if a table has data in it
+            has_rows = cur.fetchone() is not None
+            if not has_rows:
+                cur.execute(helper.basic_values(table))
+                conn.commit()
+                print(f"Filled {table} with dummy data")
+            else:
+                print(f"{table} already contains data — skipping")
+                continue
+        #Prints the tables
+        for table in TABLES:
+            print(f"{table}:")
+            cur.execute(f"SELECT * FROM {table}")
+            table_info = cur.fetchall()
+            print(helper.table_viewer(table, table_info))
+            print("\n\n\n")
     cur.close()
     conn.close()
 
@@ -131,21 +136,24 @@ def menu():
     end = False
     while not end:
         print("Choose:")
-        print("1) Reset all tables")
-        print("2) other stuff idk")
+        print("1) Infrastructure") #Get all the city's infrastructure sorted based on repairs needed
+        print("2) Contractor")
+        print("3) Assignment")
+        print("4) Maintenance log")
+        print("r) Reset all tables")
         print("q) Quit")
-        choice = input("-->").lower().strip()
+        choice = input("--> ").lower().strip()
 
         match choice:
-            case "1":
+            case "r":
                 conn = get_connection()
                 cur = conn.cursor()
                 cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
                 conn.commit()
                 cur.close()
                 conn.close()
-                main_setup()
-                print("\n\nData has successfully been reset to the default.")
+                main_setup(False)
+                print("\n\nData has successfully been reset.")
             case "2":
                 print("Idk yet")
             case "q":
