@@ -1,22 +1,13 @@
 import os
-from pathlib import Path
-
 from dotenv import load_dotenv
 import mysql.connector
-
-# Local imports (work when you run from the project root as a module)
-from BackEnd import main_helper as helper
-from FrontEnd import menu  # assuming FrontEnd is under project/ as well
-
-# Load .env from the parent-of-project folder
-ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
-load_dotenv(ENV_PATH)
+import main_helper as helper 
 
 
 
 
 #Names the database and tables
-DB_NAME = "Infrastructure Maintenance" #helper.sanitize_input("Example") #Can put whatever here of course, but this gets the message across
+DB_NAME = "Infrastructure_Maintenance" #helper.sanitize_input("Example", True) #Can put whatever here of course, but this gets the message across
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 
@@ -27,11 +18,8 @@ def get_connection():
     port=int(os.getenv("DB_PORT", "3306")),
     user=os.getenv("DB_USER"),
     password=os.getenv("DB_PASSWORD"),
-    database = DB_NAME
     )
 
-def get_name():
-    return DB_NAME
 
 #Creates the database and then selects it
 def db_setup(conn):
@@ -42,7 +30,7 @@ def db_setup(conn):
     cur.close()
 
 
-#Creates the database tables
+
 def schema_setup(conn):
     cur = conn.cursor()
     cur.execute(
@@ -58,6 +46,7 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: Infrastructure")
     
     cur.execute(
         """
@@ -71,7 +60,8 @@ def schema_setup(conn):
         )
         """
     )
-    
+    print("Created entity: Contractor")
+
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS Assignment(
@@ -88,6 +78,7 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: Assignment")
 
     cur.execute( #What would happen if the program crashed before the user could submit a maintenance log? 
         """
@@ -103,23 +94,15 @@ def schema_setup(conn):
         )
         """
     )
+    print("Created entity: MaintenanceLog\n")
     
     conn.commit()
     cur.close()
     
 
-def print_tables(cur, conn):
-    #Prints tables
-    for table in TABLES:
-        print(f"{table}:")
-        cur.execute(f"SELECT * FROM {table}")
-        table_info = cur.fetchall()
-        print(helper.table_viewer(table, table_info))
-        print("\n\n\n")
-
 
 #Initializes the database and then adds our dummy data
-def main_setup():
+def main_setup(dummy_data = True):
     conn = get_connection()
 #Initializes the database
     db_setup(conn)
@@ -127,19 +110,91 @@ def main_setup():
     conn.commit()
 #Adds dummy data
     cur = conn.cursor()
-    for table in TABLES:
-        cur.execute(f"SELECT 1 FROM {table} LIMIT 1") #Checks if a table has data in it
-        has_rows = cur.fetchone() is not None
-        if not has_rows:
-            cur.execute(helper.basic_values(table))
-            conn.commit()
-            print(f"Created {table} and filled it with dummy data")
-        else:
-            print(f"{table} already contains data — skipping")
-            continue
-    print_tables(cur, conn)
+    if dummy_data:
+        for table in TABLES:
+            cur.execute(f"SELECT 1 FROM {table} LIMIT 1") #Checks if a table has data in it
+            has_rows = cur.fetchone() is not None
+            if not has_rows:
+                cur.execute(helper.basic_values(table))
+                conn.commit()
+                print(f"Filled {table} with dummy data")
+            else:
+                print(f"{table} already contains data — skipping")
+                continue
+        #Prints the tables
+        for table in TABLES:
+            print(f"{table}:")
+            cur.execute(f"SELECT * FROM {table}")
+            table_info = cur.fetchall()
+            print(helper.table_viewer(table, table_info))
+            print("\n\n\n")
     cur.close()
     conn.close()
+
+#Just the menu
+def menu():
+    end = False
+    while not end:
+        print("Choose:")
+        print("1) Infrastructure") 
+        print("2) Contractor")
+        print("3) Assignment")
+        print("4) Maintenance log")
+        print("r) Reset all tables")
+        print("q) Quit")
+        choice = input("--> ").lower().strip()
+
+        match choice:
+            case "1":
+                print("Idk yet")
+                #Get status: Get all the city's infrastructure sorted based on repairs needed 
+                #Etc
+
+            case "2":
+                print("Idk yet")
+
+            case "3":
+                print("Idk yet")
+
+            case "4":
+                print("Idk yet")
+
+            case "q":
+                print("Goodbye.")
+                end = True
+
+            case "r":
+                print("\nAre you sure? (y/n)")
+                double_check = input("--> ")
+                if double_check[0].lower() == "y":
+                    conn = get_connection()
+                    cur = conn.cursor()
+                    print("\nDo you want to add dummy data? (y/n)")
+                    answer = input("--> ")
+                    if answer[0].lower() == "y":
+                        cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
+                        conn.commit()
+                        main_setup()
+                        print("Database has successfully been reset.")
+                    elif answer[0].lower() == "n":
+                        cur.execute(f"DROP DATABASE IF EXISTS {DB_NAME}")
+                        conn.commit()
+                        main_setup(False)
+                        print("Database has successfully been reset.")
+                    else:
+                        print("Invalid input.")
+                    cur.close()
+                    conn.close()
+                elif double_check[0].lower() == "n":
+                    print("No changes were made.")
+                else:
+                    print("Invalid input.")
+
+            case _:
+                print("Invalid input, please try again.")
+
+        if not end:
+            input("\nPress enter to continue... ")
 
 
 
@@ -147,7 +202,7 @@ def main():
     load_dotenv()
     
     main_setup()
-    menu.menu()
+    menu()
 
 
 
