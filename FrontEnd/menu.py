@@ -6,7 +6,8 @@ from BackEnd import log as log
 from BackEnd import schema as schema
 
 def schemaMenu():
-    while True:
+    end = False
+    while not end:
         print ("Choose: ")
         print ("1) Drop all tables")
         print ("2) Reset all tables")
@@ -27,7 +28,7 @@ def schemaMenu():
                 main.print_tables(curr, conn)
             case "4":
                 print ("Going back to main menu ")
-                menu()
+                end = True
 
 def menu():
     end = False
