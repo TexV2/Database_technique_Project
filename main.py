@@ -27,8 +27,11 @@ def get_connection():
     port=int(os.getenv("DB_PORT", "3306")),
     user=os.getenv("DB_USER"),
     password=os.getenv("DB_PASSWORD"),
+    database = DB_NAME
     )
 
+def get_name():
+    return DB_NAME
 
 #Creates the database and then selects it
 def db_setup(conn):
@@ -105,6 +108,15 @@ def schema_setup(conn):
     cur.close()
     
 
+def print_tables(cur, conn):
+    #Prints tables
+    for table in TABLES:
+        print(f"{table}:")
+        cur.execute(f"SELECT * FROM {table}")
+        table_info = cur.fetchall()
+        print(helper.table_viewer(table, table_info))
+        print("\n\n\n")
+
 
 #Initializes the database and then adds our dummy data
 def main_setup():
@@ -125,15 +137,10 @@ def main_setup():
         else:
             print(f"{table} already contains data — skipping")
             continue
-#Prints tables
-    for table in TABLES:
-        print(f"{table}:")
-        cur.execute(f"SELECT * FROM {table}")
-        table_info = cur.fetchall()
-        print(helper.table_viewer(table, table_info))
-        print("\n\n\n")
+    print_tables(cur, conn)
     cur.close()
     conn.close()
+
 
 
 def main():
