@@ -11,18 +11,24 @@ def sanitize_input(inp, no_spaces = False):
         last_char = char
     return True
 
-def print_tables(cur, table_name = None):
+def print_tables(cur, table_name = None, where = None):
     #Prints tables
     if table_name is not None:
         print(f"{table_name}:")
-        cur.execute(f"SELECT * FROM {table_name}")
+        if where is None: 
+            cur.execute(f"SELECT * FROM `{table_name}`")
+        else:
+            cur.execute(f"SELECT * FROM `{table_name}` WHERE {where}")
         table_info = cur.fetchall()
         print(table_viewer(table_name, table_info))
-        print("\n\n\n")
+        print()
     else:
         for table in TABLES:
             print(f"{table}:")
-            cur.execute(f"SELECT * FROM {table}")
+            if where is None: 
+                cur.execute(f"SELECT * FROM `{table}`")
+            else: 
+                cur.execute(f"SELECT * FROM `{table}` WHERE {where}")
             table_info = cur.fetchall()
             print(table_viewer(table, table_info))
             print("\n\n\n")
