@@ -8,13 +8,14 @@ from BackEnd import helper as helper
 
 
 def schema_menu():
+    print()
     end = False
     while not end:
         print ("Choose: ")
         print ("1) Drop all tables") #Unnecessary?
         print ("2) Reset all tables")
         print ("3) Show all tables")
-        print ("4) Go back")
+        print ("b) Go back")
         choice = input("--> ").lower().strip()
         match choice:
             case "1":
@@ -28,7 +29,7 @@ def schema_menu():
                 conn = main.get_connection()
                 curr = conn.cursor()
                 helper.print_tables(curr)
-            case "4":
+            case "b":
                 print ("Going back to main menu. ")
                 end = True
             case _:
@@ -37,23 +38,50 @@ def schema_menu():
         if not end:    
             input("\nPress enter to continue...")
 
+def infrastructure_submenu(menu_choice):
+    end = False
+    while not end:
+        match menu_choice:
+            case 3:
+                print("Choose search method:")
+                print("1) ID")
+                print("2) Location")
+                print("3) Install date")
+                print("4) Last inspection")
+                print("5) State")
+                print("b) Go back")
+                choice = input("--> ").lower().strip()
+                match choice:
+                    case "1":
+                        input("Enter the ID: ").lower().strip()
+                    case _:
+
+
+
+
+        if not end:
+            input("Press enter to continue...")
+
 def infrastructure_menu():
+    print()
     end = False
     while not end:
         print("Choose:")
         print("1) Show table")
-        print("2) Get status of infrastructures")
-        print("3) Add infrastructure")
-        print("4) More information about a specific infrastructure")
-        print("5) Update specific infrastructure")
-        print("6) Go back")
+        print("2) Add infrastructure")
+        print("3) More information about a specific infrastructure")
+        print("4) Update specific infrastructure")
+        print("b) Go back")
         choice = input("--> ").lower().strip()
         match choice:
             case "1":
                 conn = main.get_connection()
                 cur = conn.cursor()
+                print()
                 helper.print_tables(cur, "Infrastructure")
-            case "6":
+            case "3":
+                infrastructure_submenu(3)
+            case "b":
                 print ("Going back to main menu. ")
                 end = True
             case _:
