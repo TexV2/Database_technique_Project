@@ -38,7 +38,7 @@ def add_contractor():
         (name, 0, field, price_range)
     )
     conn.commit()
-    return True;
+    return True
 
 def update_contractor():
     print("Enter the ID of the contractor you would like to update")
