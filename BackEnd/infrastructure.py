@@ -1,6 +1,6 @@
 from BackEnd import schema as schema
 from BackEnd import helper as helper
-VALID_COLUMNS = {"Name", "Type", "Location", "install_date", "state"}
+VALID_COLUMNS = {"type", "location", "install_date", "state", "last_inspected"}
 def method_picker(method, cur):
     conversion = {
         "infrastructure_id": "the ID",
@@ -25,19 +25,19 @@ def method_picker(method, cur):
     return 0, data
 
 def update_infrastructure():
-    print("Enter the ID of the contractor you would like to update")
-    ID = input("--> ")
+    print("Enter the ID of the infrastructure you would like to update")
+    ID = input("--> ").lower()
     print("Enter what column you would like to edit")
-    column = input("--> ")
+    column = input("--> ").lower()
     if column not in VALID_COLUMNS:
         print(f"Invalid column: {column}")
         return
     print("Enter the new value")
-    new_value = input("--> ")
+    new_value = input("--> ").lower()
     conn = schema.get_connection()
     cur = conn.cursor()
     cur.execute(
-            f"UPDATE Contractor SET {column} = %s WHERE contractor_id =%s ",
+            f"UPDATE Infrastructure SET {column} = %s WHERE infrastructure_id =%s ",
             (new_value, ID)
         )
     conn.commit()
