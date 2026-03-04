@@ -1,4 +1,3 @@
-import main #Unnecessary?
 from BackEnd import infrastructure as infrastructure
 from BackEnd import contractors as contractors
 from BackEnd import assignments as assignments
@@ -40,20 +39,6 @@ def schema_menu():
 
 
 def infrastructure_submenu(menu_choice):
-    def DRY(method):
-        conn = schema.get_connection()
-        cur = conn.cursor()
-        result, data = infrastructure.method_picker(method, cur)
-        print()
-        if result == -1:
-            print("Invalid input, please try again.")
-        elif result == 0:
-            print("No data was found.")
-        elif result == 1:  
-            helper.print_tables(cur, "Infrastructure", f"{method} = {data}")
-        cur.close()
-        conn.close()
-
     while True:
         match menu_choice:
             case 3:
@@ -69,22 +54,22 @@ def infrastructure_submenu(menu_choice):
 
                 match choice:
                     case "1":
-                        DRY("infrastructure_id")
+                        infrastructure.DRY("infrastructure_id")
                         return False
                     case "2":
-                        DRY("type")
+                        infrastructure.DRY("type")
                         return False
                     case "3":
-                        DRY("location")
+                        infrastructure.DRY("location")
                         return False
                     case "4":
-                        DRY("install_date")
+                        infrastructure.DRY("install_date")
                         return False
                     case "5":
-                        DRY("last_inspection")
+                        infrastructure.DRY("last_inspection")
                         return False
                     case "6":
-                        DRY("state")
+                        infrastructure.DRY("state")
                         return False
                     case "b":
                         print("Going back to infrastructure menu. ")
@@ -94,22 +79,12 @@ def infrastructure_submenu(menu_choice):
         input("\nPress enter to continue...")
 
 def contractor_submenu(menu_choice):
-    def DRY(method):
-        conn = schema.get_connection()
-        cur = conn.cursor()
-        result, data = contractors.method_picker(method, cur)
-        print()
-        if result == -1:
-            print("Invalid input, please try again.")
-        elif result == 0:
-            print("No data was found.")
-        elif result == 1:  
-            helper.print_tables(cur, "Contractor", f"{method} = {data}")
-        cur.close()
-        conn.close()
 
     while True:
         match menu_choice:
+            case 2:
+                contractors.add_contractor()
+                return True
             case 3:
                 print("Choose search method:")
                 print("1) ID")
@@ -119,16 +94,19 @@ def contractor_submenu(menu_choice):
 
                 match choice:
                     case "1":
-                        DRY("Contractor_id")
+                        contractors.DRY("Contractor_id")
                         return False
                     case "2":
-                        DRY("Name")
+                        contractors.DRY("Name")
                         return False
                     case "b":
                         print("Going back to infrastructure menu. ")
                         return True
                     case _:
                         print("Invalid input, please try again.")
+            case 4:
+                contractors.update_contractor()
+                return True
         input("\nPress enter to continue...")
 
 def infrastructure_menu():
@@ -143,7 +121,7 @@ def infrastructure_menu():
         choice = input("--> ").lower().strip()
         match choice:
             case "1":
-                conn = main.get_connection()
+                conn = schema.get_connection()
                 cur = conn.cursor()
                 print()
                 helper.print_tables(cur, "Infrastructure")
@@ -169,12 +147,16 @@ def contractor_menu():
         choice = input("--> ").lower().strip()
         match choice:
             case "1":
-                conn = main.get_connection()
+                conn = schema.get_connection()
                 cur = conn.cursor()
                 print()
                 helper.print_tables(cur, "Contractor")
+            case "2":
+                skip = contractor_submenu(2)
             case "3":
                 skip = contractor_submenu(3)
+            case "4":
+                skip = contractor_submenu(4)
             case "b":
                 print ("Going back to main menu. ")
                 return True

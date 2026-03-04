@@ -1,3 +1,5 @@
+from BackEnd import schema as schema
+from BackEnd import helper as helper
 def method_picker(method, cur):
     conversion = {
         "infrastructure_id": "the ID",
@@ -28,3 +30,17 @@ def check_rows(method, data, cur):
     if found_rows:
         return True
     return False
+
+def DRY(method):
+    conn = schema.get_connection()
+    cur = conn.cursor()
+    result, data = method_picker(method, cur)
+    print()
+    if result == -1:
+        print("Invalid input, please try again.")
+    elif result == 0:
+        print("No data was found.")
+    elif result == 1:  
+        helper.print_tables(cur, "Infrastructure", f"{method} = {data}")
+    cur.close()
+    conn.close()
