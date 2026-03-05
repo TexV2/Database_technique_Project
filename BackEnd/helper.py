@@ -1,11 +1,18 @@
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
-def sanitize_input(inp, no_spaces = False):
+def sanitize_input(inp, numbers_only = False, date_mode = False, no_spaces = False):
     inp = inp.strip()
     banned_symbols = [None, "" ";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
     last_char = ""
     for char in inp:
-        if char in banned_symbols or (last_char+char) in ["/*", "*/", "--"] or (no_spaces and char == " "):
+        if numbers_only and char not in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
+            if date_mode and char != "-":
+                return False
+            elif not date_mode:
+                return False
+        if no_spaces and char == " ":
+            return False
+        if char in banned_symbols or (last_char+char) in ["/*", "*/", "--"]:
             return False
         last_char = char
     return True
