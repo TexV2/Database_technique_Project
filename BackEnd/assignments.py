@@ -1,6 +1,11 @@
 from BackEnd import schema as schema
 from BackEnd import helper as helper
+
+
 VALID_COLUMNS = {"task_type", "projected_cost", "projected_start_date", "projected_end_date"}
+
+
+
 def method_picker(method, cur):
     conversion = {
         "assignment_id": "the ID",
@@ -11,7 +16,10 @@ def method_picker(method, cur):
         "projected_start_date": "its projected start date",
         "projected_end_date": "it's projected end date"
     }
+
     data = input(f"Enter {conversion[method]}: ").lower().strip()
+    if not helper.sanitize_input(data):
+        return -1, data
     if method == "assignment_id":
         try:
             data = int(data)
@@ -43,70 +51,100 @@ def remove_assignment(ID):
     return
 
 def update_assignment():
+    accepted_input = True
+
     print("Enter the ID of the assignment you would like to update")
-    ID = input("--> ")
+    ID = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(ID)
     print("Enter what column you would like to edit")
-    column = input("--> ").lower()
+    column = input("--> ").lower().strip()
+    accepted_input &= helper.sanitize_input(column)
     if column not in VALID_COLUMNS:
         print(f"Invalid column: {column}")
         return
     print("Enter the new value")
-    new_value = input("--> ").lower()
-    conn = schema.get_connection()
-    cur = conn.cursor()
-    cur.execute(
-            f"UPDATE Assignment SET `{column}` = %s WHERE assignment_id =%s ",
-            (new_value, ID)
-        )
-    conn.commit()
-    cur.close()
-    conn.close()
+    new_value = input("--> ").lower().strip()
+    accepted_input &= helper.sanitize_input(ID)
+
+    if accepted_input:
+        conn = schema.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+                f"UPDATE Assignment SET `{column}` = %s WHERE assignment_id =%s ",
+                (new_value, ID)
+            )
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Row has been updated.")
+    else:
+        print("You have entered invalid data, please try again later.")
     return
 
 def view_assignment_between_dates():
+    accepted_input = True
+
     print("What is the start date for the period you are looking for assignments in?")
-    start_date = input("--> ")
+    start_date = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(start_date)
     print("What is the end date for the period you are looking for assignments in?")
-    end_date = input("--> ")
-    conn = schema.get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT * FROM Assignment
-        WHERE projected_start_date <= %s
-        AND projected_end_date >= %s
-    """,
-    (end_date, start_date)
-    )
-    rows = cur.fetchall()
-    print("ID  Infrastructure ID  Contractor ID  Task Type  Projected Cost  Projected Start Date    Projected End Date")
-    for row in rows:
-        print(f"{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}")
-    cur.close()
-    conn.close()
+    end_date = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(end_date)
+    if accepted_input:
+        conn = schema.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT * FROM Assignment
+            WHERE projected_start_date <= %s
+            AND projected_end_date >= %s
+        """,
+        (end_date, start_date)
+        )
+        rows = cur.fetchall()
+        print("ID  Infrastructure ID  Contractor ID  Task Type  Projected Cost  Projected Start Date    Projected End Date")
+        for row in rows:
+            print(f"{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}")
+        cur.close()
+        conn.close()
+    else:
+        print("You have entered invalid data, please try again later.")
     return
 
 def add_assignment():
+    accepted_input = True
+
     print("What is the ID of the contractor working on your assignment?")
-    con_id = input("--> ")
+    con_id = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(con_id, numbers_only=True)
     print("What is the ID of the infrastructure being worked on?")
-    inf_id = input("--> ")
+    inf_id = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(inf_id, numbers_only=True)
     print("What type of work is being done?")
-    type = input("--> ")
+    type = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(type)
     print("What is the projected cost?")
-    cost = input("--> ")
+    cost = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(cost, numbers_only=True)
     print("What is the projected start date?")
     start_date = input("--> ")
+    accepted_input &= helper.sanitize_input(start_date, date_mode=True)
     print("What is the projected end date?")
     end_date = input("--> ")
-    conn = schema.get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO Assignment (contractor_id, infrastructure_id, task_type, projected_cost, projected_start_date, projected_end_date)" \
-        "VALUES (%s, %s, %s, %s, %s, %s)", (con_id, inf_id, type, cost, start_date, end_date)
-    )
-    conn.commit()
-    return True
+    accepted_input &= helper.sanitize_input(end_date, date_mode=True)
+    if accepted_input:
+        conn = schema.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO Assignment (contractor_id, infrastructure_id, task_type, projected_cost, projected_start_date, projected_end_date)" \
+            "VALUES (%s, %s, %s, %s, %s, %s)", (con_id, inf_id, type, cost, start_date, end_date)
+        )
+        conn.commit()
+        print("Row has been added.")
+        return True
+    else:
+        print("You have entered invalid data, please try again later.")
+        return False
 
 def check_rows(method, data, cur):
     cur.execute(f"SELECT 1 FROM Assignment WHERE {method} = {data} LIMIT 1")

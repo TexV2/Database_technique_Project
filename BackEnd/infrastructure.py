@@ -61,18 +61,17 @@ def remove_infrastructure(ID):
 def update_infrastructure():
     accepted_input = True
     print("Enter the ID of the infrastructure you would like to update")
-    ID = input("--> ").lower()
+    ID = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(ID)
     print("Enter what column you would like to edit")
-    column = input("--> ").lower()
-    if not helper.sanitize_input(ID): 
-        accepted_input = False
+    column = input("--> ").lower().strip()
+    accepted_input &= helper.sanitize_input(column)
     if column not in VALID_COLUMNS:
         print(f"Invalid column: {column}")
         return
     print("Enter the new value")
-    new_value = input("--> ").lower()
-    if not helper.sanitize_input(new_value): 
-        accepted_input = False
+    new_value = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(new_value)
     if accepted_input:
         conn = schema.get_connection()
         cur = conn.cursor()
@@ -93,25 +92,20 @@ def add_infrastructure():
     accepted_input = True
 
     print("What type is your infrastructure?")
-    type = input("--> ")
-    if not helper.sanitize_input(type): 
-        accepted_input = False
+    type = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(type)
     print("Where is your infrastructure?")
-    location = input("--> ")
-    if not helper.sanitize_input(type): 
-        accepted_input = False
+    location = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(location)
     print("When was your infrastructure installed?")
-    installation_date = input("--> ")
-    if not helper.sanitize_input(type): 
-        accepted_input = False
+    installation_date = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(installation_date)
     print("When was your infrastructure last inspected?")
-    last_inspection = input("--> ")
-    if not helper.sanitize_input(type): 
-        accepted_input = False
+    last_inspection = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(last_inspection)
     print("What is the state of your infrastructure? ")
-    state = input("--> ")
-    if not helper.sanitize_input(type): 
-        accepted_input = False
+    state = input("--> ").strip()
+    accepted_input &= helper.sanitize_input(state)
 
     if accepted_input:
         conn = schema.get_connection()
