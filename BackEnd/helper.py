@@ -1,24 +1,64 @@
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 def sanitize_input(inp, numbers_only = False, date_mode = False, no_spaces = False):
-    if date_mode:
-        numbers_only = True
-
     inp = inp.strip()
-    banned_symbols = [None, "" ";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
-    last_char = ""
-    for char in inp:
-        if numbers_only and char not in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
-            if date_mode and char != "-":
+    if not date_mode:
+        BANNED_SYMBOLS = [None, "" ";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
+        last_char = ""
+        for char in inp:
+            if numbers_only and char not in "0123456789":
                 return False
-            elif not date_mode:
+            if no_spaces and char == " ":
                 return False
-        if no_spaces and char == " ":
+            if char in BANNED_SYMBOLS or (last_char+char) in ["/*", "*/", "--"]:
+                return False
+            last_char = char
+        return True
+    else:
+        if len(inp) != 10:
             return False
-        if char in banned_symbols or (last_char+char) in ["/*", "*/", "--"]:
+        try:
+            int(inp[:4]) #Year check
+        except ValueError:
             return False
-        last_char = char
-    return True
+        year = int(inp[:4])
+        if inp[4] != "-" and inp[7] != "-": #____-__-__ 
+            return False
+
+        try:
+            int(inp[5:7]) #___-xx-__
+        except ValueError:
+            return False
+        month = int(inp[5:7])
+        if month > 12 or month == 0: #Valid month check
+            return False
+
+        try:
+            int(inp[8:]) #Valid day check
+        except ValueError:
+            return False
+        day = int(inp[8:])
+        if day == 0: #___-__-00 Check
+            return False
+        if day > 31: #Valid day check
+            return False
+        if month in [4, 6, 9, 11] and day > 30: #Valid day by shorter month check
+            return False
+
+        if month == 2: #Ohh boy, february time
+            leap_year = False
+            year_divisible_by_four = year % 4 == 0
+            if year_divisible_by_four:
+                year_divisible_by_hundred = year % 100 == 0
+                year_divisible_by_four_hundred = year % 400 == 0
+                if not year_divisible_by_hundred or (year_divisible_by_hundred and year_divisible_by_four_hundred):
+                    leap_year = True
+
+            if leap_year and day > 29:
+                return False
+            elif not leap_year and day > 28:
+                return False
+        return True
 
 def print_tables(cur, table_name = None, where = None):
     #Prints tables
