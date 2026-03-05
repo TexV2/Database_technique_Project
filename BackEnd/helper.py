@@ -1,6 +1,9 @@
 TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 def sanitize_input(inp, numbers_only = False, date_mode = False, no_spaces = False):
+    if date_mode:
+        numbers_only = True
+
     inp = inp.strip()
     banned_symbols = [None, "" ";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
     last_char = ""
