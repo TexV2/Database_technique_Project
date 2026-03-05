@@ -72,7 +72,6 @@ def infrastructure_submenu(menu_choice):
         input("\nPress enter to continue...")
 
 def assignment_submenu(menu_choice):
-
     while True:
         match menu_choice:
             case 2:

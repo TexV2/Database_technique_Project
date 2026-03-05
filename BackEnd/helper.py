@@ -2,7 +2,7 @@ TABLES = ["Infrastructure", "Contractor", "Assignment", "MaintenanceLog"]
 
 def sanitize_input(inp, no_spaces = False):
     inp = inp.strip()
-    banned_symbols = [";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
+    banned_symbols = [None, "" ";", "'", '"', "`", "#", "=", "%", "@", "(", ")"]
     last_char = ""
     for char in inp:
         if char in banned_symbols or (last_char+char) in ["/*", "*/", "--"] or (no_spaces and char == " "):
