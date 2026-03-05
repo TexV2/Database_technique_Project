@@ -58,7 +58,7 @@ def schema_setup(conn):
     )
     print("Created entity: Assignment")
 
-    cur.execute( #What would happen if the program crashed before the user could submit a maintenance log? 
+    cur.execute(
         """
         CREATE TABLE IF NOT EXISTS MaintenanceLog(
             assignment_id INT, 

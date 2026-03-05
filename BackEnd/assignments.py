@@ -12,7 +12,7 @@ def method_picker(method, cur):
     conversion = {
         "assignment_id": "the ID",
         "infrastructure_id": "the infrastructure id",
-        "contractor ID": "the contractors id",
+        "contractor_id": "the contractor's id",
         "task_type": "the task type",
         "projected_cost": "the projected cost",
         "projected_start_date": "its projected start date",

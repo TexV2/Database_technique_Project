@@ -7,11 +7,11 @@ VALID_COLUMNS = {"name", "rating", "field", "cost"}
 
 def method_picker(method, cur):
     conversion = {
-        "Contractor_id": "the ID",
-        "Name": "Contractor name",
-        "Rating": "the rating",
-        "Field": "the field",
-        "Cost": "the Cost",
+        "contractor_id": "the ID",
+        "name": "Contractor name",
+        "rating": "the rating",
+        "field": "the field",
+        "cost": "the Cost",
     }
     data = input(f"Enter {conversion[method]}: ").lower().strip()
     if not helper.sanitize_input(data):

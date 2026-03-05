@@ -6,37 +6,6 @@ from BackEnd import schema as schema
 from BackEnd import helper as helper 
 
 
-def schema_menu():
-    while True:
-        print ("\nSchema Menu: ")
-        print ("1) Reset all tables") #Unnecessary?
-        print ("2) Show all tables")
-        print ("b) Go back")
-        choice = input("--> ").lower().strip()
-        match choice:
-            case "1":
-                print("Do you want to reset with dummy data? y/n")
-                choice = input ("--> ").lower().strip()
-                if choice == "y":
-                    schema.main_setup()
-                elif choice == "n":
-                    schema.main_setup(False)
-                else:
-                    print("Invalid input, please try again.")
-            case "2":
-                conn = schema.get_connection()
-                curr = conn.cursor()
-                helper.print_tables(curr)
-                conn.close()
-                curr.close()
-            case "b":
-                print ("Going back to main menu. ")
-                return True
-            case _:
-                print("Invalid input, please try again.")  
-        input("\nPress enter to continue...")
-
-
 
 def infrastructure_submenu(menu_choice):
     while True:
@@ -44,14 +13,33 @@ def infrastructure_submenu(menu_choice):
             case 2:
                 return infrastructure.add_infrastructure()
             case 3:
-                print("\nChoose search method:")
+                print("\nChoose Search Method:")
                 print("1) ID")
-                
-                print("b) Go back")
+                print("2) Type")
+                print("3) Location")
+                print("4) Install Date")
+                print("5) Last Inspection")
+                print("6) State")
+                print("b) Go Back")
                 choice = input("--> ").lower().strip()
                 match choice:
                     case "1":
                         infrastructure.DRY("infrastructure_id")
+                        return False
+                    case "2":
+                        infrastructure.DRY("type")
+                        return False
+                    case "3":
+                        infrastructure.DRY("location")
+                        return False
+                    case "4":
+                        infrastructure.DRY("install_date")
+                        return False
+                    case "5":
+                        infrastructure.DRY("last_inspection")
+                        return False
+                    case "6":
+                        infrastructure.DRY("state")
                         return False
                     case "b":
                         print("Going back to infrastructure menu. ")
@@ -79,6 +67,8 @@ def infrastructure_submenu(menu_choice):
                         return False
         input("\nPress enter to continue...")
 
+
+
 def assignment_submenu(menu_choice):
     while True:
         match menu_choice:
@@ -89,13 +79,37 @@ def assignment_submenu(menu_choice):
                 input("Press enter to continue...")
                 return True
             case 4:
-                print("Choose search method:")
+                print("\nChoose Search Method:")
                 print("1) ID")
-                print("b) Go back")
+                print("2) Infrastructure ID")
+                print("3) Contractor ID")
+                print("4) Task Type")
+                print("5) Projected Cost")
+                print("6) Projected Start Date")
+                print("7) Projected End Date")
+                print("b) Go Back")
                 choice = input("--> ").lower().strip()
                 match choice:
                     case "1":
                         assignments.DRY("assignment_id")
+                        return False
+                    case "2":
+                        assignments.DRY("infrastructure_id")
+                        return False
+                    case "3":
+                        assignments.DRY("contractor_id")
+                        return False
+                    case "4":
+                        assignments.DRY("task_type")
+                        return False
+                    case "5":
+                        assignments.DRY("projected_cost")
+                        return False
+                    case "6":
+                        assignments.DRY("projected_start_date")
+                        return False
+                    case "7":
+                        assignments.DRY("projected_end_date")
                         return False
                     case "b":
                         print("Going back to assignment menu. ")
@@ -122,6 +136,8 @@ def assignment_submenu(menu_choice):
                         return False
         input("\nPress enter to continue...")
 
+
+
 def log_submenu(menu_choice):
     while True:
         match menu_choice:
@@ -132,13 +148,33 @@ def log_submenu(menu_choice):
                 input("Press enter to continue")
                 return True
             case 4:
-                print("Choose search method:")
+                print("\nChoose Search Method:")
                 print("1) ID")
-                print("b) Go back")
+                print("2) Start Date")
+                print("3) End Date")
+                print("4) Cost")
+                print("5) Result")
+                print("6) Review")
+                print("b) Go Back")
                 choice = input("--> ").lower().strip()
                 match choice:
                     case "1":
                         log.DRY("assignment_id")
+                        return False
+                    case "2":
+                        log.DRY("start_date")
+                        return False
+                    case "3":
+                        log.DRY("end_date")
+                        return False
+                    case "4":
+                        log.DRY("cost")
+                        return False
+                    case "5":
+                        log.DRY("result")
+                        return False
+                    case "6":
+                        log.DRY("review")
                         return False
                     case "b":
                         print("Going back to assignment menu. ")
@@ -165,23 +201,37 @@ def log_submenu(menu_choice):
                         return False
         input("\nPress enter to continue...")
 
+
+
 def contractor_submenu(menu_choice):
     while True:
         match menu_choice:
             case 2:
                 return contractors.add_contractor()
             case 3:
-                print("Choose search method:")
+                print("\nChoose Search Method:")
                 print("1) ID")
                 print("2) Name")
-                print("b) Go back")
+                print("3) Rating")
+                print("4) Field")
+                print("5) Cost")
+                print("b) Go Back")
                 choice = input("--> ").lower().strip()
                 match choice:
                     case "1":
-                        contractors.DRY("Contractor_id")
+                        contractors.DRY("contractor_id")
                         return False
                     case "2":
-                        contractors.DRY("Name")
+                        contractors.DRY("name")
+                        return False
+                    case "3":
+                        contractors.DRY("rating")
+                        return False
+                    case "4":
+                        contractors.DRY("field")
+                        return False
+                    case "5":
+                        contractors.DRY("cost")
                         return False
                     case "b":
                         print("Going back to infrastructure menu. ")
@@ -209,15 +259,49 @@ def contractor_submenu(menu_choice):
                         return False
         input("\nPress enter to continue...")
 
+
+
+def schema_menu():
+    while True:
+        print ("\nSchema Menu: ")
+        print ("1) Reset All tables") #Unnecessary?
+        print ("2) Show All Tables")
+        print ("b) Go back")
+        choice = input("--> ").lower().strip()
+        match choice:
+            case "1":
+                print("Do you want to reset with dummy data? y/n")
+                choice = input ("--> ").lower().strip()
+                if choice == "y":
+                    schema.main_setup()
+                elif choice == "n":
+                    schema.main_setup(False)
+                else:
+                    print("Invalid input, please try again.")
+            case "2":
+                conn = schema.get_connection()
+                curr = conn.cursor()
+                helper.print_tables(curr)
+                conn.close()
+                curr.close()
+            case "b":
+                print ("Going back to main menu. ")
+                return True
+            case _:
+                print("Invalid input, please try again.")  
+        input("\nPress enter to continue...")
+
+
+
 def infrastructure_menu():
     while True:
         skip = False
         print("\nInfrastructure Menu:")
-        print("1) Show table")
-        print("2) Add infrastructure")
-        print("3) More information about a specific infrastructure")
-        print("4) Update specific infrastructure")
-        print("5) Remove specific infrastructure")
+        print("1) Show Table")
+        print("2) Add Infrastructure")
+        print("3) Search & Filter")
+        print("4) Update Infrastructure")
+        print("5) Remove Infrastructure")
         print("b) Go back")
         choice = input("--> ").lower().strip()
         match choice:
@@ -242,17 +326,19 @@ def infrastructure_menu():
         if not skip:
             input("\nPress enter to continue...")
 
+
+
 def log_menu():
     while True:
         skip = False
         print("\nAssignment Log Menu:")
-        print("1) Show table")
-        print("2) Add log")
-        print("3) View logs between two dates")
-        print("4) More information about a specific log")
-        print("5) Update log")
-        print("6) Remove specific log")
-        print("b) Go back")
+        print("1) Show Table")
+        print("2) Add Log")
+        print("3) Logs in Date Range")
+        print("4) Search & Filter")
+        print("5) Update Log")
+        print("6) Remove Log")
+        print("b) Go Back")
         choice = input("--> ").lower().strip()
         match choice:
             case "1":
@@ -278,15 +364,17 @@ def log_menu():
         if not skip:
             input("\nPress enter to continue...")
 
+
+
 def contractor_menu():
     while True:
         skip = False
         print("\nContractor Menu:")
-        print("1) Show table")
-        print("2) Add contractor")
-        print("3) More information about a specific contractor")
-        print("4) Update specific contractor")
-        print("5) Remove specific contractor")
+        print("1) Show Table")
+        print("2) Add Contractor")
+        print("3) Search & Filter")
+        print("4) Update Contractor")
+        print("5) Remove Contractor")
         print("b) Go back")
         choice = input("--> ").lower().strip()
         match choice:
@@ -311,16 +399,18 @@ def contractor_menu():
         if not skip:
             input("\nPress enter to continue...")
 
+
+
 def assignment_menu():
     while True:
         skip = False
         print("\nAssignment Menu:")
-        print("1) View assignments")
-        print("2) Add assignment")
-        print("3) View assignments ongoing during certain dates")
-        print("4) View specific assignment")
-        print("5) Update assignment")
-        print("6) Remove assignment")
+        print("1) View Assignments")
+        print("2) Add Assignment")
+        print("3) Assignments in Date Range")
+        print("4) Search & Filter")
+        print("5) Update Assignment")
+        print("6) Remove Assignment")
         print("b) Go Back")
         choice = input("--> ").lower().strip()
         match choice:
@@ -346,15 +436,16 @@ def assignment_menu():
             input("\nPress enter to continue...")
 
 
+
 def menu():
     while True:
         skip = False
         print("\nMain Menu:")
-        print("1) Schema commands ")
-        print("2) Infrastructure commands ")
-        print("3) Contractor commands ")
-        print("4) Assignment commands ")
-        print("5) Log commands")
+        print("1) Schema Commands ")
+        print("2) Infrastructure Commands ")
+        print("3) Contractor Commands ")
+        print("4) Assignment Commands ")
+        print("5) Log Commands")
         print("q) Quit")
         choice = input("--> ").lower().strip()
         
