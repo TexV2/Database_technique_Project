@@ -141,36 +141,7 @@ def count_num_contractor_jobs(ID):
     conn = schema.get_connection()
     cur = conn.cursor()
 
-    cur.execute("DROP FUNCTION IF EXISTS CountNumContractorJobs")
-    conn.commit()
-    cur.execute("""
-                DELIMITER $$
-                CREATE FUNCTION CountNumContractorJobs(p_contractor_id INT)
-                RETURNS INT
-                DETERMINISTIC
-                BEGIN
-                    DECLARE checkIfIDExists INT;
-                    DECLARE numJobs INT;
-                    
-                    SELECT COUNT(*)
-                    INTO checkIfIDExists
-                    FROM Contractor
-                    WHERE contractor_id = p_contractor_id;
-                    
-                    IF checkIfIDExists != 1 THEN
-                        RETURN 0;
-                    ELSE
-                        SELECT COUNT(*)
-                        INTO numJobs
-                        FROM Assignment a
-                        INNER JOIN MaintenanceLog ml 
-                        ON a.assignment_id = ml.assignment_id AND a.contractor_id = p_contractor_id;
-                        RETURN numJobs;
-                    END IF;
-                END$$
-                DELIMITER ;
-                """)
-    conn.commit()
+    
 
     cur.execute(f"SELECT CountNumContractorJobs({ID})")
     result = cur.fetchone()[0]

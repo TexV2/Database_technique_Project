@@ -91,6 +91,56 @@ def add_dummy_data(cur, conn):
         #Prints the tables
         helper.print_tables(cur)
 
+def advanced_mysql(cur, conn):
+    cur.execute("DROP TRIGGER IF EXISTS UpdateLastInspection") #Infrastructure last_inspection updates to current date if state changes
+    conn.commit()
+    cur.execute("""
+                DELIMITER $$
+                CREATE TRIGGER UpdateLastInspection
+                BEFORE UPDATE ON Infrastructure
+                FOR EACH ROW
+                BEGIN
+                    IF OLD.state != NEW.state THEN
+                        SET NEW.last_inspection = CURDATE();
+                    END IF;
+                END $$
+                DELIMITER ;
+                """)
+    conn.commit()
+
+    cur.execute("DROP FUNCTION IF EXISTS CountNumContractorJobs")
+    conn.commit()
+    cur.execute("""
+                DELIMITER $$
+                CREATE FUNCTION CountNumContractorJobs(p_contractor_id INT)
+                RETURNS INT
+                DETERMINISTIC
+                BEGIN
+                    DECLARE checkIfIDExists INT;
+                    DECLARE numJobs INT;
+                    
+                    SELECT COUNT(*)
+                    INTO checkIfIDExists
+                    FROM Contractor
+                    WHERE contractor_id = p_contractor_id;
+                    
+                    IF checkIfIDExists != 1 THEN
+                        RETURN 0;
+                    ELSE
+                        SELECT COUNT(*)
+                        INTO numJobs
+                        FROM Assignment a
+                        INNER JOIN MaintenanceLog ml 
+                        ON a.assignment_id = ml.assignment_id AND a.contractor_id = p_contractor_id;
+                        RETURN numJobs;
+                    END IF;
+                END$$
+                DELIMITER ;
+                """)
+    conn.commit()
+
+
+
 def main_setup(dummy_data = True):
     conn = get_connection(use_db=False)
 #Drop existing database
@@ -108,6 +158,14 @@ def main_setup(dummy_data = True):
         add_dummy_data(cur, conn)
     cur.close()
     conn.close()
+#Creates functions and triggers
+    conn = get_connection()
+    cur = conn.cursor()
+    advanced_mysql(cur, conn)
+    cur.close()
+    conn.close()
+
+
 
 #Connects to the mySql database
 def get_connection(use_db=True):
@@ -121,6 +179,8 @@ def get_connection(use_db=True):
         config["database"] = DB_NAME
     return mysql.connector.connect(**config)
 
+
+
 #Creates the database and then selects it
 def db_setup(conn):
     cur = conn.cursor()
@@ -128,3 +188,4 @@ def db_setup(conn):
                 "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" )
     cur.execute(f"USE `{DB_NAME}`")
     cur.close()
+
