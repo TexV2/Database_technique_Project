@@ -70,7 +70,7 @@ def print_tables(cur, columns, table_name, where = None, custom_instructions=Non
     else:
         cur.execute(f"SELECT * FROM `{table_name}`")
     table_info = cur.fetchall()
-    print(table_viewer(table_name, table_info, columns))
+    print(table_viewer(table_info, columns))
     print()
 
 def basic_values(table):
@@ -131,7 +131,7 @@ def basic_values(table):
 
 
 
-def table_viewer(table, table_info, columns):
+def table_viewer(table_info, columns):
     table_info = [[str(col) for col in row] for row in table_info] #Convert everything to string
     returner = ""
 
