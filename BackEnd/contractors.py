@@ -182,6 +182,8 @@ def count_num_contractor_jobs(ID):
     conn.close()
     return False
 
+
+
 def check_rows(method, data, cur):
     cur.execute(f"SELECT 1 FROM Contractor WHERE {method} = {data} LIMIT 1")
     found_rows = cur.fetchone() is not None

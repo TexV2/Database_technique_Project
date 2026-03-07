@@ -210,6 +210,7 @@ def show_finished_assignments():
         SELECT a.*, m.*
         FROM Assignment a
         INNER JOIN MaintenanceLog m ON a.assignment_id = m.assignment_id
+        GROUP BY(m.assignment_id)
         """ 
     )
     rows = cur.fetchall()

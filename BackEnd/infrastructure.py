@@ -104,6 +104,10 @@ def update_infrastructure():
 
 
 
+def update_last_inspection_trigger():
+    pass
+
+
 def add_infrastructure():
     accepted_input = True
 
