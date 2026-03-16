@@ -72,7 +72,7 @@ def infrastructure_submenu(menu_choice):
                         print("Invalid input, please try again later")
                         return False
             case 6:
-                return log.show_infrastructure_summary()
+                return infrastructure.show_infrastructure_summary()
         input("\nPress enter to continue...")
 
 
@@ -276,7 +276,10 @@ def contractor_submenu(menu_choice):
                 else:
                     print("Invalid input, please try again later.")
                     return False
-            
+            case 7:
+                contractors.global_contractor_avg_comparison()
+                return False
+        
 
         input("\nPress enter to continue...")
 
@@ -403,6 +406,7 @@ def contractor_menu():
         print("4) Update Contractor")
         print("5) Remove Contractor")
         print("6) Contractor Jobs")
+        print("7) Cost Comparison")
         print("b) Go back")
         choice = input("--> ").lower().strip()
         match choice:
@@ -421,6 +425,8 @@ def contractor_menu():
                 skip = contractor_submenu(5)
             case "6":
                 skip = contractor_submenu(6)
+            case "7":
+                skip = contractor_submenu(7)
             case "b":
                 print ("Going back to main menu. ")
                 return True

@@ -142,6 +142,29 @@ def add_infrastructure():
 
 
 
+def show_infrastructure_summary():
+    conn = schema.get_connection()
+    cur = conn.cursor()
+    custom_instruction = """
+        SELECT 
+            a.infrastructure_id,
+            COUNT(*) AS times_maintained,
+            SUM(m.cost) AS total_cost,
+            AVG(m.cost) AS avg_cost,
+            MIN(m.start_date) AS first_maintained,
+            MAX(m.end_date) AS last_maintained
+        FROM MaintenanceLog m
+        JOIN Assignment a ON a.assignment_id = m.assignment_id
+        GROUP BY a.infrastructure_id
+        ORDER BY total_cost DESC
+    """
+    columns = ["ID", "Times Maintained", "Total Cost", "Avg Cost", "First Maintained", "Last Maintained"]
+    helper.print_tables(cur, columns, "Infrastructure Summary", custom_instructions=custom_instruction)
+    cur.close()
+    conn.close()
+
+
+
 def check_rows(method, data, cur):
     cur.execute(f"SELECT 1 FROM Infrastructure WHERE {method} = {data} LIMIT 1")
     found_rows = cur.fetchone() is not None

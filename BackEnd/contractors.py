@@ -154,6 +154,25 @@ def count_num_contractor_jobs(ID):
 
 
 
+def global_contractor_avg_comparison():
+    custom_instruction = """SELECT 
+                                c.contractor_id, 
+                                c.name, 
+                                AVG(m.cost) AS contractor_avg_cost,
+                                AVG(m.cost)-(SELECT AVG(cost) FROM MaintenanceLog) as cost_difference_from_global_avg
+                                FROM Contractor c
+                                INNER JOIN Assignment a ON c.contractor_id = a.contractor_id
+                                INNER JOIN MaintenanceLog m ON a.assignment_id = m.assignment_id
+                                GROUP BY(c.contractor_id)
+                                ORDER BY(cost_difference_from_global_avg) DESC"""
+    conn = schema.get_connection()
+    cur = conn.cursor()
+    helper.print_tables(cur, ["ID", "Name", "Contractor Avg Cost", "Cost Diff From Global Avg"], "Cost Comparison", custom_instructions=custom_instruction)
+    cur.close()
+    conn.close()
+
+
+
 def check_rows(method, data, cur):
     cur.execute(f"SELECT 1 FROM Contractor WHERE {method} = {data} LIMIT 1")
     found_rows = cur.fetchone() is not None

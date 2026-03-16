@@ -135,7 +135,7 @@ def add_assignment():
     accepted_input &= helper.sanitize_input(con_id, numbers_only=True)
     conn = schema.get_connection()
     cur = conn.cursor()
-    if accepted_input and contractor.check_rows("contractor_id", con_id, cur):
+    if accepted_input and not contractor.check_rows("contractor_id", con_id, cur):
         print("Invalid ID, please try again later")
         cur.close()
         conn.close()

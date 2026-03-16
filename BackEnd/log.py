@@ -177,28 +177,7 @@ def check_rows(method, data, cur):
         return True
     return False
 
-def show_infrastructure_summary():
-    conn = schema.get_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT 
-            a.infrastructure_id,
-            COUNT(*) AS times_maintained,
-            SUM(m.cost) AS total_cost,
-            AVG(m.cost) AS avg_cost,
-            MIN(m.start_date) AS first_maintained,
-            MAX(m.end_date) AS last_maintained
-        FROM MaintenanceLog m
-        JOIN Assignment a ON a.assignment_id = m.assignment_id
-        GROUP BY a.infrastructure_id
-        ORDER BY total_cost DESC
-    """)
-    rows = cur.fetchall()
-    columns = ["Infrastructure ID", "Times Maintained", "Total Cost", "Avg Cost", "First Maintained", "Last Maintained"]
-    print("Infrastructure Summary:")
-    print(helper.table_viewer(rows, columns))
-    cur.close()
-    conn.close()
+
 
 def DRY(method):
     conn = schema.get_connection()
